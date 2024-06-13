@@ -4,7 +4,6 @@ import com.expasoft.ExpaWebForum.Entity.DTO.UserDTO;
 import com.expasoft.ExpaWebForum.Entity.Template.RegisterForm;
 import com.expasoft.ExpaWebForum.Entity.Template.UpdateForm;
 import com.expasoft.ExpaWebForum.Service.UserService;
-import jakarta.websocket.server.PathParam;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
