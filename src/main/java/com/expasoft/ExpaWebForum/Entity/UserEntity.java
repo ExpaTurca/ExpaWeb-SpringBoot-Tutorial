@@ -4,8 +4,11 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UuidGenerator;
 
+import java.sql.Time;
+import java.sql.Timestamp;
 import java.util.*;
 
 @Entity(name = "tb_user")
@@ -21,7 +24,8 @@ public class UserEntity
     private String username;
     private String email;
     private String password;
-    private Date registeredAt;
+    @CreationTimestamp
+    private Timestamp registeredAt;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
     private Set<PostEntity> post;

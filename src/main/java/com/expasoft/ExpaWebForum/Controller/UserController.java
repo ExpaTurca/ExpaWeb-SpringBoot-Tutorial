@@ -3,6 +3,7 @@ package com.expasoft.ExpaWebForum.Controller;
 import com.expasoft.ExpaWebForum.Entity.DTO.UserDTO;
 import com.expasoft.ExpaWebForum.Entity.Template.RegisterForm;
 import com.expasoft.ExpaWebForum.Entity.Template.UpdateForm;
+import com.expasoft.ExpaWebForum.Entity.Template.UuidRequestForm;
 import com.expasoft.ExpaWebForum.Service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +24,7 @@ public class UserController {
 
     @PostMapping("new")
     private ResponseEntity<?> saveUser(@RequestBody RegisterForm registerForm) {
+        System.out.println("form: " + registerForm);
         UserDTO userDTO = new UserDTO();
         userDTO.setUsername(registerForm.getUsername());
         userDTO.setEmail(registerForm.getEmail());
@@ -39,7 +41,7 @@ public class UserController {
     }
 
     @DeleteMapping("delete")
-    private int deleteUser(@RequestBody UUID id) {
-        return userService.delete(id);
+    private int deleteUser(@RequestBody UuidRequestForm uuidRequestForm) {
+        return userService.delete(uuidRequestForm);
     }
 }

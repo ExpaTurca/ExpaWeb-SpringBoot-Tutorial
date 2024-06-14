@@ -1,6 +1,7 @@
 package com.expasoft.ExpaWebForum.Service;
 
 import com.expasoft.ExpaWebForum.Entity.DTO.UserDTO;
+import com.expasoft.ExpaWebForum.Entity.Template.UuidRequestForm;
 import com.expasoft.ExpaWebForum.Entity.UserEntity;
 import com.expasoft.ExpaWebForum.Repository.UserRepository;
 import com.expasoft.ExpaWebForum.Service.CRUD.ICrud;
@@ -20,7 +21,7 @@ public class UserService{
 
     public ResponseEntity<?> getOne(UUID id) {
         Optional<UserEntity> user = rep.findById(id);
-        return ResponseEntity.of(
+        return ResponseEntity.ofNullable(
                 Optional.ofNullable(mapper.map(user.orElseThrow(), UserDTO.class))
         );
     }
@@ -30,14 +31,22 @@ public class UserService{
     }
 
     public ResponseEntity<?> save(UserDTO userDTO) {
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.of(
+                Optional.ofNullable(rep.save(mapper.map(userDTO, UserEntity.class))
+                ));
     }
 
     public ResponseEntity<?> update(UUID id, UserDTO userDTO) {
         return ResponseEntity.noContent().build();
     }
 
-    public int delete(UUID id) {
-        return -1;
+    public int delete(UuidRequestForm uuidRequestForm) {
+        try {
+            rep.deleteById(uuidRequestForm.id());
+            return 1;
+        } catch (Exception e) {
+            System.out.println(e.getLocalizedMessage());
+            return -1;
+        }
     }
 }
