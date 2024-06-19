@@ -1,8 +1,8 @@
 package com.expasoft.ExpaWebForum.Controller;
 
-import com.expasoft.ExpaWebForum.Entity.DTO.UserDTO;
-import com.expasoft.ExpaWebForum.Entity.Template.RegisterForm;
-import com.expasoft.ExpaWebForum.Entity.Template.UpdateForm;
+import com.expasoft.ExpaWebForum.Entity.Template.NewUserForm;
+import com.expasoft.ExpaWebForum.Entity.Template.UpdateEmailForm;
+import com.expasoft.ExpaWebForum.Entity.Template.UpdateUserNameForm;
 import com.expasoft.ExpaWebForum.Entity.Template.UuidRequestForm;
 import com.expasoft.ExpaWebForum.Service.UserService;
 import lombok.AllArgsConstructor;
@@ -23,21 +23,18 @@ public class UserController {
     }
 
     @PostMapping("new")
-    private ResponseEntity<?> saveUser(@RequestBody RegisterForm registerForm) {
-        System.out.println("form: " + registerForm);
-        UserDTO userDTO = new UserDTO();
-        userDTO.setUsername(registerForm.getUsername());
-        userDTO.setEmail(registerForm.getEmail());
-        userDTO.setPassword(registerForm.getPassword());
-        return userService.save(userDTO);
+    private ResponseEntity<?> saveUser(@RequestBody NewUserForm newUserForm) {
+        return userService.save(newUserForm);
     }
 
-    @PatchMapping("update/{id}")
-    private ResponseEntity<?> updateUser(@RequestParam UUID id, @RequestBody UpdateForm updateForm) {
-        UserDTO userDTO = new UserDTO();
-        userDTO.setUsername(updateForm.getUsername());
-        userDTO.setEmail(updateForm.getEmail());
-        return userService.update(id, userDTO);
+    @PatchMapping("updateUsername")
+    private ResponseEntity<?> updateUsername(@RequestBody UpdateUserNameForm updateUsernameForm) {
+        return userService.updateUsername(updateUsernameForm);
+    }
+
+    @PatchMapping("updateEmail")
+    private ResponseEntity<?> updateEmail(@RequestBody UpdateEmailForm updateUsernameForm) {
+        return userService.updateEmail(updateUsernameForm);
     }
 
     @DeleteMapping("delete")

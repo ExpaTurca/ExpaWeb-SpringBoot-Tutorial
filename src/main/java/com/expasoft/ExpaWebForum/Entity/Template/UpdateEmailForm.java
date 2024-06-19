@@ -4,11 +4,12 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
+import java.util.UUID;
+
 @Getter
 @Setter
 @RequiredArgsConstructor
-public class RegisterForm {
-    private String username;
+public class UpdateEmailForm {
+    private UUID user_id;
     private String email;
-    private String password;
 }
