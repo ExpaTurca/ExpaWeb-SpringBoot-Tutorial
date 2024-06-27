@@ -1,7 +1,6 @@
 package com.expasoft.ExpaWebForum.Controller;
 
 import com.expasoft.ExpaWebForum.Entity.DTO.PostDTO;
-import com.expasoft.ExpaWebForum.Entity.PostEntity;
 import com.expasoft.ExpaWebForum.Entity.Template.NewPostForm;
 import com.expasoft.ExpaWebForum.Entity.Template.UpdatePostForm;
 import com.expasoft.ExpaWebForum.Service.PostService;
@@ -18,9 +17,11 @@ public class PostController {
 
     private final PostService postService;
 
-    @GetMapping("{id}")
-    private ResponseEntity<?> getPost(@RequestParam UUID id) {
-        return postService.getOne(id);
+    @GetMapping("?post={post_id}&owner={owner_id}")
+    private ResponseEntity<?> getOnePost(
+            @RequestParam("post_id") UUID post_id,
+            @RequestParam("owner_id") UUID owner_id) {
+        return postService.getOne(post_id, owner_id);
     }
 
     @GetMapping("all")
@@ -30,10 +31,9 @@ public class PostController {
 
     @PostMapping("new")
     private ResponseEntity<?> savePost(@RequestBody NewPostForm newPostForm) {
-        PostDTO postDTO = new PostDTO();
-        postDTO.setTitle(newPostForm.getTitle());
-        postDTO.setContent(newPostForm.getContent());
-        return postService.save(postDTO);
+        return postService.save(
+                new NewPostForm()
+        );
     }
 
     @PatchMapping("update/{id}")
