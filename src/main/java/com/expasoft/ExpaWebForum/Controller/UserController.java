@@ -19,7 +19,7 @@ public class UserController {
 
     @GetMapping(value = "{userId}")
     private ResponseEntity<?> getUser(@PathVariable("userId") UUID id) {
-        return userService.getOne(id);
+        return ResponseEntity.of(userService.getOne(id));
     }
 
     @PostMapping("new")

@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @RestController
@@ -17,35 +18,38 @@ public class PostController {
 
     private final PostService postService;
 
-    @GetMapping("?post={post_id}&owner={owner_id}")
-    private ResponseEntity<?> getOnePost(
-            @RequestParam("post_id") UUID post_id,
-            @RequestParam("owner_id") UUID owner_id) {
-        return postService.getOne(post_id, owner_id);
+    @GetMapping("?id={post_id}")
+    private ResponseEntity<?> getOnePost(@RequestParam("post_id") UUID post_id) {
+        System.out.println(post_id);
+        return ResponseEntity.of(
+                postService.getOne(post_id)
+        );
     }
 
     @GetMapping("all")
-    private ResponseEntity<?> getAll() {
+    private Optional<PostDTO> getAllPost() {
         return postService.getAll();
     }
 
     @PostMapping("new")
     private ResponseEntity<?> savePost(@RequestBody NewPostForm newPostForm) {
-        return postService.save(
-                new NewPostForm()
+        return ResponseEntity.ofNullable(
+                postService.save(
+                        newPostForm));
+    }
+
+    @PatchMapping("{post_id}/update")
+    private ResponseEntity<?> updatePost(@PathVariable("post_id") UUID post_id, @RequestBody UpdatePostForm updatePostForm) {
+        return ResponseEntity.ofNullable(
+                postService.update(
+                        post_id,
+                        updatePostForm));
+    }
+
+    @DeleteMapping("{post_id}/delete")
+    private int deletePost(@PathVariable("post_id") UUID post_id) {
+        return postService.delete(
+                post_id
         );
-    }
-
-    @PatchMapping("update/{id}")
-    private ResponseEntity<?> updatePost(@RequestPart UUID id, @RequestBody UpdatePostForm updatePostForm) {
-        PostDTO postDTO = new PostDTO();
-        postDTO.setTitle(updatePostForm.getTitle());
-        postDTO.setContent(updatePostForm.getContent());
-        return postService.update(id, postDTO);
-    }
-
-    @DeleteMapping("delete/{id}")
-    private int deletePost(@RequestPart UUID id) {
-        return postService.delete(id);
     }
 }

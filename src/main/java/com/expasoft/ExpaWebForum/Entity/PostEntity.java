@@ -25,9 +25,9 @@ public class PostEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn
-    private UserEntity owner;
+    private UserEntity user;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "post")
-    private Set<CommentEntity> comment;
+    private Set<CommentEntity> comments;
 
 }

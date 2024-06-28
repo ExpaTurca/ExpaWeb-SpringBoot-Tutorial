@@ -7,7 +7,6 @@ import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UuidGenerator;
 
-import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.*;
 
@@ -28,8 +27,8 @@ public class UserEntity
     private Timestamp registeredAt;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
-    private Set<PostEntity> post;
+    private Set<PostEntity> posts;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
-    private Set<CommentEntity> comment;
+    private Set<CommentEntity> comments;
 }

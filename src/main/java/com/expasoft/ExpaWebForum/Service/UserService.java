@@ -12,6 +12,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -21,10 +22,10 @@ public class UserService {
     private final ModelMapper mapper;
     private final UserRepository rep;
 
-    public ResponseEntity<UserDTO> getOne(UUID id) {
+    public Optional<UserDTO> getOne(UUID id) {
         UserEntity user = rep.findById(id).orElseThrow();
 
-        return ResponseEntity.ofNullable(
+        return Optional.ofNullable(
                 mapper.map(user, UserDTO.class)
         );
     }

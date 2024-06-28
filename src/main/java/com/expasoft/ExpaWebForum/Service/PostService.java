@@ -1,47 +1,88 @@
 package com.expasoft.ExpaWebForum.Service;
 
 import com.expasoft.ExpaWebForum.Entity.DTO.PostDTO;
+import com.expasoft.ExpaWebForum.Entity.DTO.UserDTO;
 import com.expasoft.ExpaWebForum.Entity.PostEntity;
 import com.expasoft.ExpaWebForum.Entity.Template.NewPostForm;
+import com.expasoft.ExpaWebForum.Entity.Template.UpdatePostForm;
+import com.expasoft.ExpaWebForum.Entity.UserEntity;
 import com.expasoft.ExpaWebForum.Repository.PostRepository;
-import com.expasoft.ExpaWebForum.Service.CRUD.ICrud;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class PostService {
 
-    PostRepository rep;
+    private final UserService userService;
+    private final ModelMapper mapper;
+    private final PostRepository rep;
 
-    public ResponseEntity<?> getOne(UUID post_id, UUID owner_id) {
-        return ResponseEntity.ofNullable(
-                rep.findById(post_id)
-        );
+    public Optional<PostDTO> getOne(UUID post_id) {
+        return Optional.ofNullable(
+                mapper.map(
+                        rep.findById(post_id),
+                        PostDTO.class));
     }
 
-    public ResponseEntity<?> getAll() {
-        return ResponseEntity.noContent().build();
+    public Optional<UserDTO> getUserByPostId(UUID post_id) {
+        return Optional.ofNullable(
+                mapper.map(
+                        rep.findUserByPostId(
+                                post_id),
+                        UserDTO.class));
     }
 
-    public ResponseEntity<?> save(NewPostForm newPostForm) {
+    public Optional<PostDTO> getAll() {
+        return
+                Optional.of(
+                        mapper.map(
+                                rep.findAll(),
+                                PostDTO.class));
+    }
+
+
+    // TODO: Proje tamamlandıktan sonra OwnerId HttpHeader ile taşınacaktır.
+    //  NewPostForm içerisinde bulunan OwnerId silinecektir.
+    public Optional<PostEntity> save(NewPostForm newPostForm) {
         PostEntity postEntity = new PostEntity();
+        UserEntity userEntity = mapper.map(
+                userService.getOne(newPostForm.getOwnerId()).orElseThrow(),
+                UserEntity.class);
+
         postEntity.setTitle(newPostForm.getTitle());
         postEntity.setContent(newPostForm.getContent());
+        System.out.println(postEntity);
 
-        return ResponseEntity.ofNullable(
-                rep.save(postEntity)
-        );
+        return Optional.of(
+                rep.save(
+                        postEntity));
     }
 
-    public ResponseEntity<?> update(UUID id, PostDTO postDTO) {
-        return ResponseEntity.noContent().build();
+    public Optional<PostEntity> update(UUID post_id, UpdatePostForm updatePostForm) {
+        PostDTO postDTO = getOne(post_id).orElseThrow();
+        postDTO.setTitle(updatePostForm.getTitle());
+        postDTO.setContent(updatePostForm.getContent());
+        postDTO.setUserDTO(getUserByPostId(post_id).orElseThrow());
+
+        return Optional.of(
+                rep.save(
+                        mapper.map(
+                                postDTO,
+                                PostEntity.class)));
     }
 
     public int delete(UUID id) {
-        return -1;
+        try {
+            rep.deleteById(id);
+            return 1;
+        } catch (Exception e) {
+            System.out.println(e.getLocalizedMessage());
+            return -1;
+        }
     }
 }
