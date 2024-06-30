@@ -12,18 +12,17 @@ import java.util.Optional;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("api/v3/post/")
+@RequestMapping("api/v3/post")
 @AllArgsConstructor
 public class PostController {
 
     private final PostService postService;
 
-    @GetMapping("?id={post_id}")
-    private ResponseEntity<?> getOnePost(@RequestParam("post_id") UUID post_id) {
+    @GetMapping("{post_id}")
+    private ResponseEntity<?> getOnePost(@PathVariable("post_id") UUID post_id) {
         System.out.println(post_id);
         return ResponseEntity.of(
-                postService.getOne(post_id)
-        );
+                postService.getOne(post_id));
     }
 
     @GetMapping("all")

@@ -19,26 +19,31 @@ public class UserController {
 
     @GetMapping(value = "{userId}")
     private ResponseEntity<?> getUser(@PathVariable("userId") UUID id) {
-        return ResponseEntity.of(userService.getOne(id));
+        return ResponseEntity.of(
+                userService.getOne(id));
     }
 
     @PostMapping("new")
     private ResponseEntity<?> saveUser(@RequestBody NewUserForm newUserForm) {
-        return userService.save(newUserForm);
+        return userService.save(
+                newUserForm);
     }
 
     @PatchMapping("updateUsername")
     private ResponseEntity<?> updateUsername(@RequestBody UpdateUserNameForm updateUsernameForm) {
-        return userService.updateUsername(updateUsernameForm);
+        return userService.updateUsername(
+                updateUsernameForm);
     }
 
     @PatchMapping("updateEmail")
     private ResponseEntity<?> updateEmail(@RequestBody UpdateEmailForm updateUsernameForm) {
-        return userService.updateEmail(updateUsernameForm);
+        return userService.updateEmail(
+                updateUsernameForm);
     }
 
     @DeleteMapping("delete")
     private int deleteUser(@RequestBody UuidRequestForm uuidRequestForm) {
-        return userService.delete(uuidRequestForm);
+        return userService.delete(
+                uuidRequestForm);
     }
 }

@@ -5,8 +5,10 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UuidGenerator;
 
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.UUID;
 
@@ -20,9 +22,11 @@ public class CommentEntity {
     @UuidGenerator(style = UuidGenerator.Style.TIME)
     private UUID id;
     private String content;
-    private Date createdAt;
 
-    @ManyToOne(fetch = FetchType.LAZY,targetEntity = PostEntity.class)
+    @CreationTimestamp
+    private Timestamp createdAt;
+
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity = PostEntity.class)
     @JoinColumn(name = "postId")
     private PostEntity post;
 

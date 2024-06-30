@@ -7,12 +7,13 @@ import com.expasoft.ExpaWebForum.Entity.Template.NewPostForm;
 import com.expasoft.ExpaWebForum.Entity.Template.UpdatePostForm;
 import com.expasoft.ExpaWebForum.Entity.UserEntity;
 import com.expasoft.ExpaWebForum.Repository.PostRepository;
+import com.expasoft.ExpaWebForum.Repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -20,6 +21,7 @@ public class PostService {
 
     private final UserService userService;
     private final ModelMapper mapper;
+    private final UserRepository userRep;
     private final PostRepository rep;
 
     public Optional<PostDTO> getOne(UUID post_id) {
@@ -49,26 +51,27 @@ public class PostService {
     // TODO: Proje tamamlandıktan sonra OwnerId HttpHeader ile taşınacaktır.
     //  NewPostForm içerisinde bulunan OwnerId silinecektir.
     public Optional<PostEntity> save(NewPostForm newPostForm) {
-        PostEntity postEntity = new PostEntity();
         UserEntity userEntity = mapper.map(
                 userService.getOne(newPostForm.getOwnerId()).orElseThrow(),
                 UserEntity.class);
 
+        PostEntity postEntity = new PostEntity();
+
         postEntity.setTitle(newPostForm.getTitle());
         postEntity.setContent(newPostForm.getContent());
-        System.out.println(postEntity);
 
+        Set<PostEntity> postEntityList = new HashSet<>();
+        userEntity.setPosts(postEntityList);
+        System.out.println("hello");
+        userRep.saveAndFlush(userEntity);
         return Optional.of(
-                rep.save(
-                        postEntity));
+                rep.save(postEntity));
     }
 
     public Optional<PostEntity> update(UUID post_id, UpdatePostForm updatePostForm) {
         PostDTO postDTO = getOne(post_id).orElseThrow();
         postDTO.setTitle(updatePostForm.getTitle());
         postDTO.setContent(updatePostForm.getContent());
-        postDTO.setUserDTO(getUserByPostId(post_id).orElseThrow());
-
         return Optional.of(
                 rep.save(
                         mapper.map(

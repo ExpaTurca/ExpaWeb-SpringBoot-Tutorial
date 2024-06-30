@@ -4,8 +4,10 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UuidGenerator;
 
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.Set;
 import java.util.UUID;
@@ -21,13 +23,14 @@ public class PostEntity {
 
     private String title;
     private String content;
-    private Date createdAt;
+    @CreationTimestamp
+    private Timestamp createdAt;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn
+    @ManyToOne(cascade = CascadeType.ALL, targetEntity = UserEntity.class)
+    @JoinColumn(name = "userId")
     private UserEntity user;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "post")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "post", orphanRemoval = true)
     private Set<CommentEntity> comments;
 
 }

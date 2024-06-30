@@ -20,15 +20,18 @@ public class UserEntity
     @Id
     @UuidGenerator(style = UuidGenerator.Style.TIME)
     private UUID id;
+    @Column(unique = true, nullable = false)
     private String username;
+    @Column(unique = true, nullable = false)
     private String email;
+    @Column(nullable = false)
     private String password;
     @CreationTimestamp
     private Timestamp registeredAt;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user", orphanRemoval = true)
     private Set<PostEntity> posts;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user", orphanRemoval = true)
     private Set<CommentEntity> comments;
 }
