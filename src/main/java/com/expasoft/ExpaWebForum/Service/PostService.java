@@ -51,19 +51,18 @@ public class PostService {
     // TODO: Proje tamamlandıktan sonra OwnerId HttpHeader ile taşınacaktır.
     //  NewPostForm içerisinde bulunan OwnerId silinecektir.
     public Optional<PostEntity> save(NewPostForm newPostForm) {
+
         UserEntity userEntity = mapper.map(
                 userService.getOne(newPostForm.getOwnerId()).orElseThrow(),
                 UserEntity.class);
 
         PostEntity postEntity = new PostEntity();
-
         postEntity.setTitle(newPostForm.getTitle());
         postEntity.setContent(newPostForm.getContent());
-
         Set<PostEntity> postEntityList = new HashSet<>();
+
         userEntity.setPosts(postEntityList);
-        System.out.println("hello");
-        userRep.saveAndFlush(userEntity);
+
         return Optional.of(
                 rep.save(postEntity));
     }
