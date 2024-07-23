@@ -7,18 +7,21 @@ import com.expasoft.ExpaWebForum.Entity.Template.UpdateUserNameForm;
 import com.expasoft.ExpaWebForum.Entity.Template.UuidRequestForm;
 import com.expasoft.ExpaWebForum.Entity.UserEntity;
 import com.expasoft.ExpaWebForum.Repository.UserRepository;
+import jakarta.persistence.EntityManager;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
 
+    private final EntityManager entityManager;
     private final ModelMapper mapper;
     private final UserRepository rep;
 
@@ -30,37 +33,37 @@ public class UserService {
         );
     }
 
-    public ResponseEntity<?> getAll() {
-        return ResponseEntity.noContent().build();
+    public Set<UserDTO> getAll() {
+        return rep.findAll().stream().map(
+                res -> mapper.map(res, UserDTO.class)
+        ).collect(Collectors.toSet());
     }
 
-    public ResponseEntity<UserEntity> save(NewUserForm newUserForm) {
+    @Transactional
+    public Optional<UserDTO> save(NewUserForm newUserForm) {
         UserEntity newUser = new UserEntity();
         newUser.setUsername(newUserForm.getUsername());
         newUser.setEmail(newUserForm.getEmail());
         newUser.setPassword(newUserForm.getPassword());
 
-        return ResponseEntity.ofNullable(
-                rep.save(newUser)
-        );
+        entityManager.persist(newUser);
+
+        return Optional.of(newUser).
+                map(m -> mapper.map(m, UserDTO.class));
     }
 
-    public ResponseEntity<UserEntity> updateUsername(UpdateUserNameForm updateUserNameForm) {
-        UserEntity user = rep.findById(updateUserNameForm.getUser_id()).orElseThrow();
+    public Optional<UserDTO> updateUsername(UpdateUserNameForm updateUserNameForm) {
+        UserEntity user = entityManager.find(UserEntity.class, updateUserNameForm.getUser_id());
         user.setUsername(updateUserNameForm.getUsername());
-
-        return ResponseEntity.ofNullable(
-                rep.save(user)
-        );
+        entityManager.persist(user);
+        return Optional.of(user).map(m -> mapper.map(m, UserDTO.class));
     }
 
-    public ResponseEntity<?> updateEmail(UpdateEmailForm updateUsernameForm) {
-        UserEntity user = rep.findById(updateUsernameForm.getUser_id()).orElseThrow();
+    public Optional<UserDTO> updateEmail(UpdateEmailForm updateUsernameForm) {
+        UserEntity user = entityManager.find(UserEntity.class, updateUsernameForm.getEmail());
         user.setEmail(updateUsernameForm.getEmail());
-
-        return ResponseEntity.ofNullable(
-                rep.save(user)
-        );
+        entityManager.persist(user);
+        return Optional.of(user).map(m->mapper.map(m,UserDTO.class));
     }
 
     public int delete(UuidRequestForm uuidRequestForm) {

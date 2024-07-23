@@ -1,5 +1,6 @@
 package com.expasoft.ExpaWebForum.Controller;
 
+import com.expasoft.ExpaWebForum.Entity.CommentEntity;
 import com.expasoft.ExpaWebForum.Entity.DTO.CommentDTO;
 import com.expasoft.ExpaWebForum.Entity.Template.NewCommentForm;
 import com.expasoft.ExpaWebForum.Entity.Template.UpdateCommentForm;
@@ -8,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 @RestController
@@ -18,27 +21,23 @@ public class CommentController {
     private final CommentService commentService;
 
     @GetMapping("{id}")
-    private ResponseEntity<?> getOne(@RequestParam UUID id) {
+    private Optional<CommentDTO> getOne(@RequestParam UUID id) {
         return commentService.getOne(id);
     }
 
     @GetMapping("all")
-    private ResponseEntity<?> getAll(){
+    private Set<CommentDTO> getAll(){
         return commentService.getAll();
     }
 
     @PostMapping("new")
-    private ResponseEntity<?> saveComment(@RequestBody NewCommentForm newCommentForm){
-        CommentDTO commentDTO=new CommentDTO();
-        commentDTO.setContent(newCommentForm.getContent());
-        return commentService.save(commentDTO);
+    private Optional<CommentDTO> saveComment(@RequestBody NewCommentForm newCommentForm) {
+        return commentService.save(newCommentForm);
     }
 
     @PatchMapping("update/{id}")
-    private ResponseEntity<?> updateComment(@RequestParam UUID id, @RequestBody UpdateCommentForm updateCommentForm) {
-        CommentDTO commentDTO = new CommentDTO();
-        commentDTO.setContent(updateCommentForm.getContent());
-        return commentService.update(id, commentDTO);
+    private Optional<CommentDTO> updateComment(@RequestParam UUID id, @RequestBody UpdateCommentForm updateCommentForm) {
+        return commentService.update(id, updateCommentForm);
     }
 
     @DeleteMapping("delete/{id}")

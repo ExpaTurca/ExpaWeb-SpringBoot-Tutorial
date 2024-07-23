@@ -5,10 +5,10 @@ import com.expasoft.ExpaWebForum.Entity.Template.NewPostForm;
 import com.expasoft.ExpaWebForum.Entity.Template.UpdatePostForm;
 import com.expasoft.ExpaWebForum.Service.PostService;
 import lombok.AllArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 @RestController
@@ -19,30 +19,27 @@ public class PostController {
     private final PostService postService;
 
     @GetMapping("{post_id}")
-    private ResponseEntity<?> getOnePost(@PathVariable("post_id") UUID post_id) {
-        System.out.println(post_id);
-        return ResponseEntity.of(
-                postService.getOne(post_id));
+    private Optional<PostDTO> getOnePost(@PathVariable("post_id") UUID post_id) {
+        return postService.getOne(post_id);
     }
 
     @GetMapping("all")
-    private Optional<PostDTO> getAllPost() {
+    private Set<PostDTO> getAllPost() {
         return postService.getAll();
     }
 
+
+    //FIXME: Yeni paylaşım yapılırken kullanıcı eklenmiyor. Düzelt.
     @PostMapping("new")
-    private ResponseEntity<?> savePost(@RequestBody NewPostForm newPostForm) {
-        return ResponseEntity.ofNullable(
-                postService.save(
-                        newPostForm));
+    private Optional<PostDTO> savePost(@RequestBody NewPostForm newPostForm) {
+        return postService.save(newPostForm);
     }
 
     @PatchMapping("{post_id}/update")
-    private ResponseEntity<?> updatePost(@PathVariable("post_id") UUID post_id, @RequestBody UpdatePostForm updatePostForm) {
-        return ResponseEntity.ofNullable(
-                postService.update(
+    private Optional<PostDTO> updatePost(@PathVariable("post_id") UUID post_id, @RequestBody UpdatePostForm updatePostForm) {
+        return postService.update(
                         post_id,
-                        updatePostForm));
+                        updatePostForm);
     }
 
     @DeleteMapping("{post_id}/delete")

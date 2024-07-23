@@ -1,14 +1,13 @@
 package com.expasoft.ExpaWebForum.Entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UuidGenerator;
-
 import java.sql.Timestamp;
-import java.util.Date;
 import java.util.Set;
 import java.util.UUID;
 
@@ -21,15 +20,20 @@ public class PostEntity {
     @UuidGenerator(style = UuidGenerator.Style.TIME)
     private UUID id;
 
+    @Column(length = 48)
     private String title;
+
+    @Column(columnDefinition = "TEXT")
     private String content;
+
     @CreationTimestamp
     private Timestamp createdAt;
 
     @ManyToOne(cascade = CascadeType.ALL, targetEntity = UserEntity.class)
-    @JoinColumn(name = "userId")
+    @JoinColumn(name = "user_id")
     private UserEntity user;
 
+    @JsonIgnore()
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "post", orphanRemoval = true)
     private Set<CommentEntity> comments;
 

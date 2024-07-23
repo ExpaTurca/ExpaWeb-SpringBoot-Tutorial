@@ -1,5 +1,6 @@
 package com.expasoft.ExpaWebForum.Entity.DTO;
 
+import com.expasoft.ExpaWebForum.Entity.UserEntity;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -14,5 +15,5 @@ public class PostDTO {
     private String title;
     private String content;
     private Date createdAt;
-    private UserDTO userDTO;
+    private UserDTO user;
 }

@@ -13,7 +13,7 @@ public class CommentDTO {
 
     private String content;
     private Date createdAt;
-    private PostDTO postDTO;
-    private UserDTO userDTO;
+    private PostDTO post;
+    private UserDTO user;
 
 }
