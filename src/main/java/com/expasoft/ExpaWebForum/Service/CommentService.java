@@ -11,6 +11,7 @@ import com.expasoft.ExpaWebForum.Repository.CommentRepository;
 import com.expasoft.ExpaWebForum.Repository.PostRepository;
 import com.expasoft.ExpaWebForum.Repository.UserRepository;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -21,6 +22,7 @@ import javax.swing.text.html.parser.Entity;
 import javax.xml.stream.events.Comment;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -28,16 +30,16 @@ public class CommentService{
 
     private final ModelMapper mapper;
     private final EntityManager entityManager;
-    private final CommentRepository rep;
 
     public Optional<CommentDTO> getOne(UUID id) {
-        return Optional.of(
-                entityManager.find(
-                        CommentEntity.class, id)).map(m -> mapper.map(m, CommentDTO.class));
+        return Optional.of(entityManager.find(CommentEntity.class, id))
+                .map(m -> mapper.map(m, CommentDTO.class));
     }
 
     public Set<CommentDTO> getAll() {
-        return rep.findAll().stream().map(res -> mapper.map(res, CommentDTO.class)).collect(Collectors.toSet());
+        return Stream.of(entityManager.find(CommentEntity.class, "*"))
+                .map(res -> mapper.map(res, CommentDTO.class))
+                .collect(Collectors.toSet());
     }
 
     @Transactional
@@ -54,8 +56,8 @@ public class CommentService{
         entityManager.refresh(entityManager.merge(post));
         entityManager.persist(commentEntity);
 
-        return Optional.of(
-                commentEntity).map(m -> mapper.map(m, CommentDTO.class));
+        return Optional.of(commentEntity)
+                .map(m -> mapper.map(m, CommentDTO.class));
     }
 
     @Transactional
@@ -63,8 +65,8 @@ public class CommentService{
         CommentEntity commentEntity = entityManager.find(CommentEntity.class, id);
         commentEntity.setContent(updateCommentForm.getContent());
         entityManager.persist(commentEntity);
-        return Optional.of(
-                commentEntity).map(m -> mapper.map(m, CommentDTO.class));
+        return Optional.of(commentEntity)
+                .map(m -> mapper.map(m, CommentDTO.class));
     }
 
 

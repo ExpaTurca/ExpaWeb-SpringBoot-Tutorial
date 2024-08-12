@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -40,9 +41,10 @@ public class PostService {
     }
 
     public Set<PostDTO> getAll() {
-        return rep.findAll().stream().map(res -> mapper.map(res, PostDTO.class)).collect(Collectors.toSet());
+        return Stream.of(entityManager.find(PostEntity.class, "*"))
+                .map(res -> mapper.map(res, PostDTO.class))
+                .collect(Collectors.toSet());
     }
-
 
     // TODO: Proje tamamlandıktan sonra OwnerId HttpHeader ile taşınacak.
     //  NewPostForm içerisinde bulunan OwnerId silinecek.
